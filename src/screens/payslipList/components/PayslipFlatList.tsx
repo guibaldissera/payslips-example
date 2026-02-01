@@ -1,9 +1,10 @@
 import {
-    ActivityIndicator,
-    FlatList,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import type { PayslipModel } from "../../../api/useFetchPayslips";
 
@@ -11,6 +12,7 @@ interface PayslipFlatListProps {
   data: PayslipModel[];
   loading: boolean;
   refetch: () => void;
+  onItemPress?: (id: string) => void;
 }
 
 const formatDateRange = (fromDate: string, toDate: string): string => {
@@ -37,15 +39,24 @@ const formatDateRange = (fromDate: string, toDate: string): string => {
   return `${month} ${year}`;
 };
 
-const renderItem = ({ item }: { item: PayslipModel }) => (
-  <View style={styles.itemContainer}>
+const renderItem = (
+  { item }: { item: PayslipModel },
+  onItemPress?: (id: string) => void,
+) => (
+  <Pressable
+    style={({ pressed }: { pressed: boolean }) => [
+      styles.itemContainer,
+      pressed && styles.itemPressed,
+    ]}
+    onPress={() => onItemPress?.(item.id)}
+  >
     <View style={styles.itemContent}>
       <Text style={styles.itemTitle}>
         {formatDateRange(item.fromDate, item.toDate)}
       </Text>
       <Text style={styles.itemSubtitle}>ID: {item.id}</Text>
     </View>
-  </View>
+  </Pressable>
 );
 
 const renderEmptyComponent = () => (
@@ -61,6 +72,7 @@ export const PayslipFlatList = ({
   data,
   loading,
   refetch,
+  onItemPress,
 }: PayslipFlatListProps) => {
   if (loading) {
     return (
@@ -74,7 +86,7 @@ export const PayslipFlatList = ({
   return (
     <FlatList
       data={data}
-      renderItem={renderItem}
+      renderItem={(props) => renderItem(props, onItemPress)}
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.listContent}
       ListEmptyComponent={renderEmptyComponent}
@@ -102,6 +114,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
+  },
+  itemPressed: {
+    opacity: 0.7,
+    backgroundColor: "#F0F0F0",
   },
   itemContent: {
     flexDirection: "column",
