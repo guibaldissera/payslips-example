@@ -1,12 +1,13 @@
 import {
   ActivityIndicator,
   FlatList,
-  Pressable,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import type { PayslipModel } from "../../../api/useFetchPayslips";
+import { EmptyPayslipList } from "./EmptyPayslipList";
+import { PayslipItem } from "./PayslipItem";
 
 interface PayslipFlatListProps {
   data: PayslipModel[];
@@ -14,59 +15,6 @@ interface PayslipFlatListProps {
   refetch: () => void;
   onItemPress?: (id: string) => void;
 }
-
-const formatDateRange = (fromDate: string, toDate: string): string => {
-  const from = new Date(fromDate);
-
-  const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const month = monthNames[from.getMonth()];
-  const year = from.getFullYear();
-
-  return `${month} ${year}`;
-};
-
-const renderItem = (
-  { item }: { item: PayslipModel },
-  onItemPress?: (id: string) => void,
-) => (
-  <Pressable
-    style={({ pressed }: { pressed: boolean }) => [
-      styles.itemContainer,
-      pressed && styles.itemPressed,
-    ]}
-    onPress={() => onItemPress?.(item.id)}
-  >
-    <View style={styles.itemContent}>
-      <Text style={styles.itemTitle}>
-        {formatDateRange(item.fromDate, item.toDate)}
-      </Text>
-      <Text style={styles.itemSubtitle}>ID: {item.id}</Text>
-    </View>
-  </Pressable>
-);
-
-const renderEmptyComponent = () => (
-  <View style={styles.emptyContainer}>
-    <Text style={styles.emptyText}>No payslips found</Text>
-    <Text style={styles.emptySubtext}>
-      Your payslips will appear here once available
-    </Text>
-  </View>
-);
 
 export const PayslipFlatList = ({
   data,
@@ -86,10 +34,12 @@ export const PayslipFlatList = ({
   return (
     <FlatList
       data={data}
-      renderItem={(props) => renderItem(props, onItemPress)}
+      renderItem={({ item }) => (
+        <PayslipItem item={item} onItemPress={onItemPress} />
+      )}
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.listContent}
-      ListEmptyComponent={renderEmptyComponent}
+      ListEmptyComponent={EmptyPayslipList}
       onRefresh={refetch}
       refreshing={loading}
     />
@@ -101,37 +51,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 16,
   },
-  itemContainer: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  itemPressed: {
-    opacity: 0.7,
-    backgroundColor: "#F0F0F0",
-  },
-  itemContent: {
-    flexDirection: "column",
-  },
-  itemTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#000000",
-    marginBottom: 4,
-  },
-  itemSubtitle: {
-    fontSize: 14,
-    color: "#666666",
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
@@ -142,22 +61,5 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 16,
     color: "#666666",
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 60,
-  },
-  emptyText: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#333333",
-    marginBottom: 8,
-  },
-  emptySubtext: {
-    fontSize: 14,
-    color: "#999999",
-    textAlign: "center",
   },
 });
