@@ -1,25 +1,26 @@
 import { StyleSheet, Text, View } from "react-native";
 
-interface PayslipFileViewerProps {
+interface PayslipDetailsFileViewerProps {
   fileUri: string;
 }
 
-export const PayslipFileViewer = ({ fileUri }: PayslipFileViewerProps) => {
+export const PayslipDetailsFileViewer = ({
+  fileUri,
+}: PayslipDetailsFileViewerProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Payslip Document</Text>
-      
+
       <View style={styles.placeholderContainer}>
         <Text style={styles.placeholderText}>File Viewer</Text>
         <Text style={styles.filePathText}>File: {fileUri}</Text>
-        
+
         <View style={styles.todoContainer}>
           <Text style={styles.todoTitle}>TODO:</Text>
           <Text style={styles.todoText}>
-            • Implement image viewer for payslip files{"\n"}
-            • Add zoom and pan functionality{"\n"}
-            • Support PDF viewing if needed{"\n"}
-            • Add download/share options
+            • Implement image viewer for payslip files{"\n"}• Add zoom and pan
+            functionality{"\n"}• Support PDF viewing if needed{"\n"}• Add
+            download/share options
           </Text>
         </View>
       </View>
