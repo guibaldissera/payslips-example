@@ -1,13 +1,8 @@
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import type { PayslipModel } from "../../../api/useFetchPayslips";
-import { EmptyPayslipList } from "./EmptyPayslipList";
+import { PayslipEmptyList } from "./PayslipEmptyList";
 import { PayslipItem } from "./PayslipItem";
+import { PayslipListLoading } from "./PayslipListLoading";
 
 interface PayslipFlatListProps {
   data: PayslipModel[];
@@ -23,12 +18,7 @@ export const PayslipFlatList = ({
   onItemPress,
 }: PayslipFlatListProps) => {
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Loading payslips...</Text>
-      </View>
-    );
+    return <PayslipListLoading />;
   }
 
   return (
@@ -39,7 +29,7 @@ export const PayslipFlatList = ({
       )}
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.listContent}
-      ListEmptyComponent={EmptyPayslipList}
+      ListEmptyComponent={PayslipEmptyList}
       onRefresh={refetch}
       refreshing={loading}
     />
@@ -50,16 +40,5 @@ const styles = StyleSheet.create({
   listContent: {
     flexGrow: 1,
     padding: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5F5F5",
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: "#666666",
   },
 });

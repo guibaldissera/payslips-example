@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
-export const EmptyPayslipList = () => (
+export const PayslipEmptyList = () => (
   <View style={styles.emptyContainer}>
     <Text style={styles.emptyText}>No payslips found</Text>
     <Text style={styles.emptySubtext}>
