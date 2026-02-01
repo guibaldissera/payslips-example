@@ -1,5 +1,10 @@
 import { Stack } from "expo-router";
+import { AlertProvider } from "../components";
 
 export default function RootLayout() {
-  return <Stack />;
+  return (
+    <AlertProvider>
+      <Stack />
+    </AlertProvider>
+  );
 }
