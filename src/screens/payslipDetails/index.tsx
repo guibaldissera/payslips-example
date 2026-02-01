@@ -31,7 +31,10 @@ export const PayslipDetailsScreen = () => {
       contentContainerStyle={styles.contentContainer}
     >
       <PayslipDetailsInfo payslip={payslip} />
-      <PayslipDetailsFileViewer fileUri={payslip.file} />
+      <PayslipDetailsFileViewer
+        fileUri={payslip.file}
+        fromDate={payslip.fromDate}
+      />
     </ScrollView>
   );
 };
