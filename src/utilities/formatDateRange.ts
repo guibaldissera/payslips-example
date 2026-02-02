@@ -20,5 +20,9 @@ export const formatDateRange = (fromDate: string, toDate: string): string => {
   const monthStart = monthNames[fromMonth - 1];
   const monthEnd = monthNames[toMonth - 1];
 
+  if (fromMonth === toMonth) {
+    return `${monthStart} ${fromYear}`;
+  }
+
   return `${monthStart} - ${monthEnd} ${fromYear}`;
 };
