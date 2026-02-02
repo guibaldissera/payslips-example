@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import * as Sharing from "expo-sharing";
 import { useState } from "react";
@@ -122,7 +122,7 @@ export const PayslipDetailsFileViewer = ({
             {isDownloading ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
-              <Ionicons name="eye-sharp" size={20} color="#FFFFFF" />
+              <MaterialIcons name="visibility" size={20} color="#FFFFFF" />
             )}
             <Text style={styles.buttonText}>
               {isDownloading ? "Loading..." : "Preview"}
@@ -136,7 +136,7 @@ export const PayslipDetailsFileViewer = ({
             ]}
             onPress={handleShare}
           >
-            <Ionicons name="download-outline" size={20} color="#FFFFFF" />
+            <MaterialIcons name="file-download" size={20} color="#FFFFFF" />
             <Text style={styles.buttonText}>Save</Text>
           </Pressable>
         </View>
@@ -144,7 +144,7 @@ export const PayslipDetailsFileViewer = ({
 
       {!downloadCompleted ? (
         <View style={styles.placeholderContainer}>
-          <Ionicons name="cloud-download-outline" size={64} color="#999999" />
+          <MaterialIcons name="image" size={64} color="#999999" />
           <Text style={styles.placeholderText}>
             Click Preview to view the file
           </Text>
@@ -160,7 +160,7 @@ export const PayslipDetailsFileViewer = ({
         </View>
       ) : (
         <View style={styles.nonViewableContainer}>
-          <Ionicons name="document-outline" size={64} color="#999999" />
+          <MaterialIcons name="description" size={64} color="#999999" />
           <Text style={styles.nonViewableTitle}>Arquivo Baixado</Text>
           <Text style={styles.nonViewableMessage}>
             This file cannot be viewed here. Open it manually in the chosen
