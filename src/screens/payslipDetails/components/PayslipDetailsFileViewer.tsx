@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import * as Sharing from "expo-sharing";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -11,11 +12,6 @@ import {
 import { useAlert } from "../../../components";
 import { useDownloadPayslip } from "../../../hooks/useDownloadPayslip";
 
-const ASSET_MAP: Record<string, any> = {
-  "payslip-1.png": require("../../../../assets/payslips/payslip-1.png"),
-  "payslip-2.png": require("../../../../assets/payslips/payslip-2.png"),
-};
-
 interface PayslipDetailsFileViewerProps {
   fileUri: string;
   fromDate: string;
@@ -25,10 +21,17 @@ export const PayslipDetailsFileViewer = ({
   fileUri,
   fromDate,
 }: PayslipDetailsFileViewerProps) => {
+  // ---------- Hooks
   const { downloadPayslip, isDownloading } = useDownloadPayslip();
   const { showAlert } = useAlert();
-  const [downloadCompleted, setDownloadCompleted] = useState(false);
 
+  // ---------- States
+  const [downloadCompleted, setDownloadCompleted] = useState(false);
+  const [localFileUri, setLocalFileUri] = useState<string | undefined>(
+    undefined,
+  );
+
+  // ---------- Auxiliaries
   const isImageFile = (uri: string): boolean => {
     const lowerUri = uri.toLowerCase();
     return (
@@ -38,65 +41,118 @@ export const PayslipDetailsFileViewer = ({
     );
   };
 
-  const handleDownload = async () => {
+  const downloadFile = async (uri: string) => {
+    // Create the filename to save
     const date = new Date(fromDate);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const filename = `payslip-${year}-${month}.png`;
 
-    const result = await downloadPayslip(fileUri, filename);
+    // Download the file
+    return await downloadPayslip(fileUri, filename);
+  };
 
+  // ---------- Handlers
+  const handlePreview = async () => {
+    const result = await downloadFile(fileUri);
+
+    // Update states based in result
     if (result.success) {
+      setLocalFileUri(result.data?.uri);
       setDownloadCompleted(true);
-      showAlert({
-        variant: "success",
-        title: "Download Concluído",
-        message: "Payslip salvo com sucesso!",
-      });
     } else if (result.error) {
       showAlert({
         variant: "error",
-        title: result.error.title,
-        message: result.error.message,
+        title: result.error?.title ?? "Failure",
+        message: result.error?.message ?? "Failed to download the payslip.",
       });
     }
   };
 
+  const handleShare = async () => {
+    let payslipUri;
+    if (!downloadCompleted) {
+      const result = await downloadFile(fileUri);
+      if (result.success) {
+        payslipUri = result.data?.uri;
+      } else {
+        showAlert({
+          variant: "error",
+          title: result.error?.title ?? "Failure",
+          message: result.error?.message ?? "Failed to download the payslip.",
+        });
+        return;
+      }
+    }
+
+    if (payslipUri) {
+      // Show share dialog to user select where to save the file or share
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (isAvailable && payslipUri) {
+        await Sharing.shareAsync(payslipUri, {
+          mimeType: "image/png",
+          dialogTitle: "Save or Share Payslip",
+        });
+
+        // FIX: if user cancel the action, this success alert will also be showed, but it should not.
+        showAlert({
+          variant: "success",
+          title: "Download Concluído",
+          message: "Payslip salvo com sucesso!",
+        });
+      }
+    }
+  };
+
+  // ---------- Render
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Payslip Document</Text>
-        <Pressable
-          style={({ pressed }) => [
-            styles.downloadButton,
-            pressed && styles.downloadButtonPressed,
-            isDownloading && styles.downloadButtonDisabled,
-          ]}
-          onPress={handleDownload}
-          disabled={isDownloading}
-        >
-          {isDownloading ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
-          ) : (
+        <View style={styles.buttonsContainer}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.previewButton,
+              pressed && styles.previewButtonPressed,
+              isDownloading && styles.previewButtonDisabled,
+            ]}
+            onPress={handlePreview}
+            disabled={isDownloading}
+          >
+            {isDownloading ? (
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            ) : (
+              <Ionicons name="eye-sharp" size={20} color="#FFFFFF" />
+            )}
+            <Text style={styles.buttonText}>
+              {isDownloading ? "Loading..." : "Preview"}
+            </Text>
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [
+              styles.saveButton,
+              pressed && styles.saveButtonPressed,
+              isDownloading && styles.saveButtonDisabled,
+            ]}
+            onPress={handleShare}
+          >
             <Ionicons name="download-outline" size={20} color="#FFFFFF" />
-          )}
-          <Text style={styles.downloadButtonText}>
-            {isDownloading ? "Baixando..." : "Download"}
-          </Text>
-        </Pressable>
+            <Text style={styles.buttonText}>Save</Text>
+          </Pressable>
+        </View>
       </View>
 
       {!downloadCompleted ? (
         <View style={styles.placeholderContainer}>
           <Ionicons name="cloud-download-outline" size={64} color="#999999" />
           <Text style={styles.placeholderText}>
-            Clique em Download para visualizar o arquivo
+            Click Preview to view the file
           </Text>
         </View>
-      ) : isImageFile(fileUri) ? (
+      ) : localFileUri && isImageFile(localFileUri) ? (
         <View style={styles.imageContainer}>
           <Image
-            source={ASSET_MAP[fileUri] || { uri: fileUri }}
+            source={{ uri: localFileUri }}
             style={styles.image}
             contentFit="contain"
             transition={200}
@@ -107,8 +163,8 @@ export const PayslipDetailsFileViewer = ({
           <Ionicons name="document-outline" size={64} color="#999999" />
           <Text style={styles.nonViewableTitle}>Arquivo Baixado</Text>
           <Text style={styles.nonViewableMessage}>
-            Este arquivo não pode ser visualizado aqui. Abra-o manualmente no
-            local escolhido de download.
+            This file cannot be viewed here. Open it manually in the chosen
+            download location.
           </Text>
         </View>
       )}
@@ -131,33 +187,52 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     marginBottom: 16,
+    gap: 8,
   },
   title: {
     fontSize: 22,
     fontWeight: "700",
     color: "#000000",
   },
-  downloadButton: {
+  buttonsContainer: {
+    flexDirection: "row",
+    gap: 8,
+    alignSelf: "flex-end",
+  },
+  previewButton: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#3B82F6",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     borderRadius: 8,
     gap: 8,
   },
-  downloadButtonPressed: {
+  previewButtonPressed: {
     backgroundColor: "#2563EB",
   },
-  downloadButtonDisabled: {
+  previewButtonDisabled: {
     backgroundColor: "#93C5FD",
     opacity: 0.7,
   },
-  downloadButtonText: {
+  saveButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#10B981",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    gap: 8,
+  },
+  saveButtonPressed: {
+    backgroundColor: "#059669",
+  },
+  saveButtonDisabled: {
+    backgroundColor: "#6EE7B7",
+    opacity: 0.7,
+  },
+  buttonText: {
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "600",
