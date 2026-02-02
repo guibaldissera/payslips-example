@@ -1,25 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import type { PayslipModel } from "../../../api/useFetchPayslips";
+import { formatFullDateRange } from "../../../utilities/formatFullDateRange";
 
 interface PayslipDetailsInfoProps {
   payslip: PayslipModel;
 }
-
-const formatDateRange = (fromDate: string, toDate: string): string => {
-  const from = new Date(fromDate);
-  const to = new Date(toDate);
-
-  const options: Intl.DateTimeFormatOptions = {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  };
-
-  const fromFormatted = from.toLocaleDateString("en-US", options);
-  const toFormatted = to.toLocaleDateString("en-US", options);
-
-  return `${fromFormatted} - ${toFormatted}`;
-};
 
 export const PayslipDetailsInfo = ({ payslip }: PayslipDetailsInfoProps) => {
   return (
@@ -29,7 +14,7 @@ export const PayslipDetailsInfo = ({ payslip }: PayslipDetailsInfoProps) => {
       <View style={styles.infoRow}>
         <Text style={styles.label}>Period:</Text>
         <Text style={styles.value}>
-          {formatDateRange(payslip.fromDate, payslip.toDate)}
+          {formatFullDateRange(payslip.fromDate, payslip.toDate)}
         </Text>
       </View>
 

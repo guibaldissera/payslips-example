@@ -1,36 +1,11 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { PayslipModel } from "../../../api/useFetchPayslips";
+import { formatDateRange } from "../../../utilities/formatDateRange";
 
 interface PayslipItemProps {
   item: PayslipModel;
   onItemPress?: (id: string) => void;
 }
-
-const formatDateRange = (fromDate: string, toDate: string): string => {
-  const from = new Date(fromDate);
-  const to = new Date(toDate);
-
-  const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const monthStart = monthNames[from.getMonth()];
-  const monthEnd = monthNames[to.getMonth()];
-  const year = from.getFullYear();
-
-  return `${monthStart} - ${monthEnd} ${year}`;
-};
 
 export const PayslipItem = ({ item, onItemPress }: PayslipItemProps) => (
   <Pressable
