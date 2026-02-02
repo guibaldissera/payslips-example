@@ -1,50 +1,92 @@
-# Welcome to your Expo app 👋
+# Payslips
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A mobile application built with React Native and Expo for viewing and managing employee payslips. The app provides a clean interface to browse payslip documents, view details, and download them for offline access.
 
-## Get started
+## Installation
 
-1. Install dependencies
+This project uses [Bun](https://bun.sh) as the package manager and runtime.
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
+1. Install dependencies:
 
    ```bash
-   npx expo start
+   bun install
    ```
 
-In the output, you'll find options to open the app in a
+2. Start the development server:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+   ```bash
+   bun start
+   ```
+
+3. Run on specific platforms:
+
+   ```bash
+   bun run android  # Run on Android emulator
+   bun run ios      # Run on iOS simulator
+   bun run web      # Run on web browser
+   ```
+
+In the output, you'll find options to open the app in:
+
 - [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- [Expo Go](https://expo.dev/go) app
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Running Tests
 
-## Get a fresh project
-
-When you're ready, run:
+Run the test suite using Jest:
 
 ```bash
-npm run reset-project
+bun test              # Run tests once
+bun run test:watch    # Run tests in watch mode
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Technologies Used
 
-## Learn more
+### Core Framework
 
-To learn more about developing your project with Expo, look at the following resources:
+- **React Native** - Cross-platform mobile development framework
+- **Expo** (~54.0) - Development platform and tooling for React Native
+- **Expo Router** - File-based routing for navigation
+- **TypeScript** - Type-safe JavaScript
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Features
 
-## Join the community
+- **Expo File System** - File management and storage
+- **Expo Sharing** - Share payslips with other apps
 
-Join our community of developers creating universal apps.
+### Testing
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- **Jest** - Testing framework
+- **React Native Testing Library** - Component testing utilities
+
+### Development Tools
+
+- **ESLint** - Code linting with Expo config
+- **Bun** - Fast package manager and runtime
+
+## Limitations and What to Improve
+
+### Bugs
+
+- **Web**: Download images when running the web version
+
+### Current Limitations
+
+- **Mock Data**: The app currently uses static mock payslip data instead of connecting to a real backend API, using a delay to simulate loading state
+- **Limited File Formats**: Only supports image-based payslips
+- **No Search/Filter**: Lacks search and filtering capabilities for payslips
+- **Offline Storage**: Downloaded payslips are not persisted between app sessions
+- **Android version**: My Android environment is with some storage problems and I haven't tested the app thoroughly on it
+
+### Potential Improvements
+
+- **Backend Integration**: Connect to a real API for fetching payslips dynamically
+- **Authentication**: Implement secure login with JWT or OAuth
+- **PDF Support**: Add support for PDF payslip documents
+- **Features**:
+  - Search and filter payslips by date, amount, or status
+  - Export multiple payslips at once
+  - Dark mode support
+- **Performance**: Implement pagination for large payslip lists
+- **Accessibility**: Improve screen reader support and accessibility features
