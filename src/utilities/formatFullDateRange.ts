@@ -2,16 +2,14 @@ export const formatFullDateRange = (
   fromDate: string,
   toDate: string,
 ): string => {
-  const [fromYear, fromMonth, fromDay] = fromDate.split("-").map(Number);
-  const [toYear, toMonth, toDay] = toDate.split("-").map(Number);
-
-  const from = new Date(fromYear, fromMonth - 1, fromDay);
-  const to = new Date(toYear, toMonth - 1, toDay);
+  const from = new Date(fromDate);
+  const to = new Date(toDate);
 
   const options: Intl.DateTimeFormatOptions = {
     day: "2-digit",
     month: "short",
     year: "numeric",
+    timeZone: "UTC",
   };
 
   const fromFormatted = from.toLocaleDateString("en-US", options);
