@@ -70,7 +70,7 @@ export const PayslipDetailsFileViewer = ({
   };
 
   const handleShare = async () => {
-    let payslipUri;
+    let payslipUri = localFileUri;
     if (!downloadCompleted) {
       const result = await downloadFile(fileUri);
       if (result.success) {
